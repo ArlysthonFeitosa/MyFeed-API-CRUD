@@ -38,8 +38,8 @@ class CommentModel {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'postId': postId,
-      'ownerAvatarURL': ownerAvatarURL,
-      'ownerUsername': ownerUsername,
+      'avatar': ownerAvatarURL,
+      'username': ownerUsername,
       'content': content,
     };
   }
@@ -48,8 +48,8 @@ class CommentModel {
     return CommentModel(
       commentId: map['id'],
       postId: map['postId'] as String,
-      ownerAvatarURL: map['ownerAvatarURL'] as String,
-      ownerUsername: map['ownerUsername'] as String,
+      ownerAvatarURL: map['avatar'] as String,
+      ownerUsername: map['username'] as String,
       content: map['content'] as String,
     );
   }

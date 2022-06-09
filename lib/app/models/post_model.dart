@@ -19,26 +19,35 @@ class PostModel {
   });
 
   Map<String, dynamic> toMap() {
+    List<Map<String, dynamic>> commentsMap = [];
+
+    for (CommentModel comment in comments) {
+      commentsMap.add(comment.toMap());
+    }
+
     return <String, dynamic>{
       'postId': postId,
       'ownerUsername': ownerUsername,
-      'ownerAvatarURL': ownerAvatarURL,
+      'ownerAvatar': ownerAvatarURL,
       'content': content,
-      'comments': comments.map((x) => x.toMap()).toList(),
+      'comments': commentsMap,
     };
   }
 
   factory PostModel.fromMap(Map<String, dynamic> map) {
+    List<dynamic> commentsMap = map['comments'];
+
+    List<CommentModel> commentsModels = [];
+    for (Map<String, dynamic> map in commentsMap) {
+      commentsModels.add(CommentModel.fromMap(map));
+    }
+
     return PostModel(
       postId: map['id'] as String,
       ownerUsername: map['ownerUsername'] as String,
-      ownerAvatarURL: map['ownerAvatarURL'] as String,
+      ownerAvatarURL: map['ownerAvatar'] as String,
       content: map['content'] as String,
-      comments: List<CommentModel>.from(
-        (map['comments'] as List<int>).map<CommentModel>(
-          (x) => CommentModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      comments: commentsModels,
     );
   }
 
