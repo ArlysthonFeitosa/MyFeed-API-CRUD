@@ -4,75 +4,184 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:myfeed/app/api/api_info.dart';
-import 'package:myfeed/app/exceptions/try_again_later_exception.dart';
 import 'package:myfeed/app/interfaces/exceptions/handled_exception_interface.dart';
+import 'package:myfeed/app/interfaces/repository/posts_repository_interface.dart';
 import 'package:myfeed/app/interfaces/services/http_service_interface.dart';
+import 'package:myfeed/app/models/comment_model.dart';
 import 'package:myfeed/app/models/post_model.dart';
 import 'package:myfeed/app/repositories/posts_repository.dart';
 import 'package:myfeed/app/services/dio_http_service.dart';
 
-import 'all_posts_response.dart';
-import 'posts_paginated_response.dart';
+import 'responses/all_posts_response.dart';
+import 'responses/posts_paginated_response.dart';
 
 void main() {
-  test('should get all posts', () async {
-    final Dio dio = Dio();
 
-    final DioAdapter dioAdapter = DioAdapter(dio: dio);
-    dioAdapter.onGet(postsEndpoint(), (server) {
-      server.reply(200, jsonDecode(successAllPostsResponse));
+  group('GET ALL POSTS METHOD | ', () {
+    test('should get all posts', () async {
+      final Dio dio = Dio();
+
+      final DioAdapter dioAdapter = DioAdapter(dio: dio);
+      dioAdapter.onGet(postsEndpoint(), (server) {
+        server.reply(200, jsonDecode(successAllPostsResponse));
+      });
+
+      dio.httpClientAdapter = dioAdapter;
+
+      final IHttpService httpService = DioHttpService(dio: dio);
+      final IPostsRepository postsRepository = PostsRepository(httpService: httpService);
+
+      List<PostModel> posts = await postsRepository.getAllPosts();
+
+      expect(posts, isNotEmpty);
     });
 
-    dio.httpClientAdapter = dioAdapter;
-
-    final IHttpService httpService = DioHttpService(dio: dio);
-    final PostsRepository postsRepository = PostsRepository(httpService: httpService);
-
-    List<PostModel> posts = await postsRepository.getAllPosts();
-
-    expect(posts, isNotEmpty);
-  });
-
-  test('should not get posts', () async {
     //DISABLE UNCAUGHT EXCEPTIONS FOR THIS TEST
-    final Dio dio = Dio();
+    test('should not get posts', () async {
+      final Dio dio = Dio();
 
-    final DioAdapter dioAdapter = DioAdapter(dio: dio);
-    dioAdapter.onGet(postsEndpoint(), (server) {
-      server.reply(
-        400,
-        jsonEncode({
-          'error': '400',
-        }),
+      final DioAdapter dioAdapter = DioAdapter(dio: dio);
+      dioAdapter.onGet(postsEndpoint(), (server) {
+        server.reply(
+          400,
+          jsonEncode({
+            'error': '400',
+          }),
+        );
+      });
+
+      dio.httpClientAdapter = dioAdapter;
+
+      final IHttpService httpService = DioHttpService(dio: dio);
+      final IPostsRepository postsRepository = PostsRepository(httpService: httpService);
+
+      expectLater(
+        postsRepository.getAllPosts(),
+        throwsA(isA<HandledException>()),
       );
     });
 
-    dio.httpClientAdapter = dioAdapter;
+    test('should get posts paginated', () async {
+      final Dio dio = Dio();
 
-    final IHttpService httpService = DioHttpService(dio: dio);
-    final PostsRepository postsRepository = PostsRepository(httpService: httpService);
+      final DioAdapter dioAdapter = DioAdapter(dio: dio);
+      dioAdapter.onGet(postsEndpoint(page: 1, limit: 10), (server) {
+        server.reply(200, jsonDecode(postsPaginatedResponse));
+      });
 
-    expectLater(
-      postsRepository.getAllPosts(),
-      throwsA(isA<HandledException>()),
-    );
+      dio.httpClientAdapter = dioAdapter;
+
+      final IHttpService httpService = DioHttpService(dio: dio);
+      final IPostsRepository postsRepository = PostsRepository(httpService: httpService);
+
+      List<PostModel> posts = await postsRepository.getAllPosts(page: 1, limit: 10);
+
+      expect(posts.length, equals(10));
+    });
   });
 
-  test('should get posts paginated', () async {
-    final Dio dio = Dio();
+  group('CREATE POST METHOD | ', () {
+    //DISABLE UNCAUGHT EXCEPTIONS FOR THIS TEST
+    test('should not create comment', () async {
+      CommentModel commentModel = CommentModel(
+        commentId: 'commentId',
+        postId: 'postId',
+        ownerAvatarURL: 'ownerAvatarURL',
+        ownerUsername: 'ownerUsername',
+        content: 'content',
+      );
 
-    final DioAdapter dioAdapter = DioAdapter(dio: dio);
-    dioAdapter.onGet(postsEndpoint(page: 1, limit: 10), (server) {
-      server.reply(200, jsonDecode(postsPaginatedResponse));
+      final Dio dio = Dio();
+
+      final DioAdapter dioAdapter = DioAdapter(dio: dio);
+      dioAdapter.onPost(
+          createCommentEndpoint(
+            postId: commentModel.postId,
+          ), (server) {
+        server.reply(400, jsonEncode({"status": "error"}));
+      });
+
+      dio.httpClientAdapter = dioAdapter;
+
+      final IHttpService httpService = DioHttpService(dio: dio);
+      final IPostsRepository postsRepository = PostsRepository(httpService: httpService);
+
+      expect(
+        () async => await postsRepository.createComment(commentModel: commentModel),
+        throwsA(
+          isA<HandledException>(),
+        ),
+      );
     });
+  });
 
-    dio.httpClientAdapter = dioAdapter;
+  group('UPDATE POST METHOD |', () {
+    //DISABLE UNCAUGHT EXCEPTIONS FOR THIS TEST
+    test('should not update comment', () async {
+      CommentModel commentModel = CommentModel(
+        commentId: 'commentId',
+        postId: 'postId',
+        ownerAvatarURL: 'ownerAvatarURL',
+        ownerUsername: 'ownerUsername',
+        content: 'content',
+      );
 
-    final IHttpService httpService = DioHttpService(dio: dio);
-    final PostsRepository postsRepository = PostsRepository(httpService: httpService);
+      final Dio dio = Dio();
 
-    List<PostModel> posts = await postsRepository.getAllPosts(page: 1, limit: 10);
+      final DioAdapter dioAdapter = DioAdapter(dio: dio);
+      dioAdapter.onPut(
+          updateCommentEndpoint(
+            postId: commentModel.postId,
+            commentId: commentModel.commentId,
+          ), (server) {
+        server.reply(400, jsonEncode({"status": "error"}));
+      });
 
-    expect(posts.length, equals(10));
+      dio.httpClientAdapter = dioAdapter;
+
+      final IHttpService httpService = DioHttpService(dio: dio);
+      final IPostsRepository postsRepository = PostsRepository(httpService: httpService);
+
+      expectLater(
+        postsRepository.updateComment(commentModel: commentModel),
+        throwsA(
+          isA<HandledException>(),
+        ),
+      );
+    });
+  });
+
+  group('DELETE POST METHOD |', () {
+    test('should not delete comment', () async {
+      CommentModel commentModel = CommentModel(
+        commentId: 'commentId',
+        postId: 'postId',
+        ownerAvatarURL: 'ownerAvatarURL',
+        ownerUsername: 'ownerUsername',
+        content: 'content',
+      );
+      final Dio dio = Dio();
+
+      final DioAdapter dioAdapter = DioAdapter(dio: dio);
+      dioAdapter.onDelete(
+          deleteCommentEndpoint(
+            postId: commentModel.postId,
+            commentId: commentModel.commentId,
+          ), (server) {
+        server.reply(400, jsonEncode({"status": "error"}));
+      });
+
+      dio.httpClientAdapter = dioAdapter;
+
+      final IHttpService httpService = DioHttpService(dio: dio);
+      final IPostsRepository postsRepository = PostsRepository(httpService: httpService);
+
+      expectLater(
+        postsRepository.deleteComment(commentModel: commentModel),
+        throwsA(
+          isA<HandledException>(),
+        ),
+      );
+    });
   });
 }

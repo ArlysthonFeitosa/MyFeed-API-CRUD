@@ -37,7 +37,7 @@ class PostsRepository implements IPostsRepository {
   @override
   Future<void> updateComment({required CommentModel commentModel}) async {
     return await httpService.put(
-      url: updateCommentEndpoint(postId: commentModel.postId, commentId: commentModel.postId),
+      url: updateCommentEndpoint(postId: commentModel.postId, commentId: commentModel.commentId),
       body: commentModel.toMap(),
     );
   }

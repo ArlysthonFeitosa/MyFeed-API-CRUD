@@ -37,6 +37,7 @@ class CommentModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': commentId,
       'postId': postId,
       'avatar': ownerAvatarURL,
       'username': ownerUsername,
