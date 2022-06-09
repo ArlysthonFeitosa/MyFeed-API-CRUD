@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:myfeed/app/interfaces/services/http_service_interface.dart';
-import 'package:myfeed/app/exceptions/try_again_later_exception.dart';
+import 'package:myfeed/app/exceptions/exceptions.dart';
 
 class DioHttpService implements IHttpService {
   DioHttpService({
