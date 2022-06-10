@@ -24,19 +24,21 @@ class PostComponent extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(postModel.content),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(postModel.content),
+            ),
           ),
           const Divider(
             height: 3,
           ),
           Row(
             children: [
-              Expanded(
-                child: CounterComponent(
-                  count: postModel.comments.length,
-                  icon: const Icon(Icons.comment_sharp),
-                ),
+              CounterComponent(
+                count: postModel.comments.length,
+                icon: const Icon(Icons.comment_sharp),
               ),
+              const Expanded(child: SizedBox()),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(
@@ -45,7 +47,10 @@ class PostComponent extends StatelessWidget {
                     arguments: CommentsPageArgs(postModel: postModel),
                   );
                 },
-                child: const Text('View Comments'),
+                child: const Text(
+                  'View Comments',
+                  textAlign: TextAlign.end,
+                ),
               ),
             ],
           )

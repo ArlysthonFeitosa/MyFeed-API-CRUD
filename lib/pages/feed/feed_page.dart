@@ -23,7 +23,7 @@ class FeedPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SocialMedia'),
+        title: const Text('MyFeed'),
       ),
       body: ListView.builder(
         controller: feedViewmodel.scrollController,
