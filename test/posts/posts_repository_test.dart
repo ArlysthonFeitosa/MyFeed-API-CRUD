@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:myfeed/app/api/api_info.dart';
@@ -16,7 +17,6 @@ import 'responses/all_posts_response.dart';
 import 'responses/posts_paginated_response.dart';
 
 void main() {
-
   group('GET ALL POSTS METHOD | ', () {
     test('should get all posts', () async {
       final Dio dio = Dio();
@@ -80,7 +80,7 @@ void main() {
     });
   });
 
-  group('CREATE POST METHOD | ', () {
+  group('CREATE COMMENT METHOD | ', () {
     //DISABLE UNCAUGHT EXCEPTIONS FOR THIS TEST
     test('should not create comment', () async {
       CommentModel commentModel = CommentModel(
@@ -95,11 +95,14 @@ void main() {
 
       final DioAdapter dioAdapter = DioAdapter(dio: dio);
       dioAdapter.onPost(
-          createCommentEndpoint(
-            postId: commentModel.postId,
-          ), (server) {
-        server.reply(400, jsonEncode({"status": "error"}));
-      });
+        createCommentEndpoint(
+          postId: commentModel.postId,
+        ),
+        (server) {
+          server.reply(400, jsonEncode({"status": "error"}));
+        },
+        data: commentModel.toMap(),
+      );
 
       dio.httpClientAdapter = dioAdapter;
 
@@ -115,7 +118,7 @@ void main() {
     });
   });
 
-  group('UPDATE POST METHOD |', () {
+  group('UPDATE COMMENT METHOD |', () {
     //DISABLE UNCAUGHT EXCEPTIONS FOR THIS TEST
     test('should not update comment', () async {
       CommentModel commentModel = CommentModel(
@@ -130,12 +133,15 @@ void main() {
 
       final DioAdapter dioAdapter = DioAdapter(dio: dio);
       dioAdapter.onPut(
-          updateCommentEndpoint(
-            postId: commentModel.postId,
-            commentId: commentModel.commentId,
-          ), (server) {
-        server.reply(400, jsonEncode({"status": "error"}));
-      });
+        updateCommentEndpoint(
+          postId: commentModel.postId,
+          commentId: commentModel.commentId,
+        ),
+        (server) {
+          server.reply(400, jsonEncode({"status": "error"}));
+        },
+        data: commentModel.toMap(),
+      );
 
       dio.httpClientAdapter = dioAdapter;
 
@@ -151,7 +157,7 @@ void main() {
     });
   });
 
-  group('DELETE POST METHOD |', () {
+  group('DELETE COMMENT METHOD |', () {
     test('should not delete comment', () async {
       CommentModel commentModel = CommentModel(
         commentId: 'commentId',
