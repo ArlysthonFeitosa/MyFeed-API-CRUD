@@ -1,10 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:myfeed/app/api/api_info.dart';
 import 'package:myfeed/app/interfaces/repository/posts_repository_interface.dart';
 import 'package:myfeed/app/interfaces/services/http_service_interface.dart';
 import 'package:myfeed/app/models/post_model.dart';
 import 'package:myfeed/app/models/comment_model.dart';
 
-class PostsRepository implements IPostsRepository {
+class PostsRepository extends ChangeNotifier implements IPostsRepository {
   final IHttpService httpService;
 
   PostsRepository({required this.httpService});

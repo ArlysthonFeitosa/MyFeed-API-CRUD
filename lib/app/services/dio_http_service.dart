@@ -75,6 +75,7 @@ class DioHttpService implements IHttpService {
 
       return response.data;
     } on DioError catch (e) {
+      debugPrint(e.message);
       throw TryAgainLaterException();
     }
   }
