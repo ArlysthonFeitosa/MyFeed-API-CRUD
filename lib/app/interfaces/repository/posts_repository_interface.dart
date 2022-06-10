@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:myfeed/app/models/comment_model.dart';
 import 'package:myfeed/app/models/post_model.dart';
 

@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:myfeed/app/repositories/posts_repository.dart';
 import 'package:myfeed/app/services/dio_http_service.dart';
-import 'package:myfeed/pages/feed_page.dart';
+import 'package:myfeed/pages/feed/feed_page.dart';
+import 'package:myfeed/pages/route_handler.dart';
 import 'package:provider/provider.dart';
 
 class AppWidget extends StatelessWidget {
@@ -23,10 +24,15 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MyFeed',
+      debugShowCheckedModeBanner: false,
+      onGenerateRoute: onGenerateRoute,
+      initialRoute: '/',
+      routes: {
+        '/': (c) => FeedPage.create(),
+      },
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
+        primarySwatch: Colors.purple,
       ),
-      home: FeedPage.create(),
     );
   }
 }
