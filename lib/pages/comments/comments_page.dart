@@ -33,9 +33,7 @@ class CommentsPage extends StatelessWidget {
     bool reachedMax = context.watch<CommentsViewmodel>().reachedMax;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Post'),
-      ),
+      appBar: AppBar(title: const Text('Post')),
       body: SingleChildScrollView(
         controller: context.watch<CommentsViewmodel>().scrollController,
         child: Padding(
@@ -54,6 +52,36 @@ class CommentsPage extends StatelessWidget {
                 child: Text(postModel.content),
               ),
               const Divider(),
+              Row(
+                children: [
+                  Flexible(
+                    child: Form(
+                      key: context.read<CommentsViewmodel>().formkey,
+                      child: Column(
+                        children: [
+                          TextFieldComponent(
+                            hint: 'Write a comment...',
+                            controller: context.read<CommentsViewmodel>().newCommentFieldController,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () async {
+                      String? response = await context.read<CommentsViewmodel>().sendComment();
+
+                      if (response == null) {
+                        await context.read<CommentsViewmodel>().refreshData();
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 30,
+              ),
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
