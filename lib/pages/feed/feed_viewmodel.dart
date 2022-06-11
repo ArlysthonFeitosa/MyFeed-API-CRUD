@@ -6,13 +6,14 @@ import 'package:myfeed/app/models/post_model.dart';
 class FeedViewmodel extends ChangeNotifier {
   final IPostsRepository postsRepository;
 
-  FeedViewmodel(this.postsRepository){
+  FeedViewmodel(this.postsRepository) {
     fetchPosts();
     setListeners();
   }
 
+  bool reachedMax = false;
   int _page = 1;
-  final int _limit = 10;
+  final int _limit = 5;
   List<PostModel> posts = [];
   final ScrollController scrollController = ScrollController();
 
@@ -29,15 +30,21 @@ class FeedViewmodel extends ChangeNotifier {
   }
 
   Future<String?> fetchPosts() async {
+    if (reachedMax) return null;
     try {
       List<PostModel> postsResponse = await postsRepository.getAllPosts(
         page: _page,
         limit: _limit,
       );
 
+      incrementPage();
+
+      if (postsResponse.isEmpty) {
+        reachedMax = true;
+      }
+
       posts.addAll(postsResponse);
 
-      incrementPage();
       notifyListeners();
       return null;
     } on HandledException catch (e) {

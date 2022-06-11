@@ -20,6 +20,8 @@ class FeedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FeedViewmodel feedViewmodel = context.read<FeedViewmodel>();
+    List<PostModel> posts = context.watch<FeedViewmodel>().posts;
+    bool reachedMax = context.watch<FeedViewmodel>().reachedMax;
 
     return Scaffold(
       appBar: AppBar(
@@ -27,8 +29,17 @@ class FeedPage extends StatelessWidget {
       ),
       body: ListView.builder(
         controller: feedViewmodel.scrollController,
-        itemCount: context.watch<FeedViewmodel>().posts.length,
+        itemCount: posts.length + 1,
         itemBuilder: ((context, index) {
+          if (index == posts.length) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: reachedMax ? const Text('No more posts') : const CircularProgressIndicator(),
+              ),
+            );
+          }
+
           PostModel post = feedViewmodel.posts[index];
 
           return PostComponent(postModel: post);
