@@ -86,7 +86,7 @@ void main() {
 
       final DioAdapter dioAdapter = DioAdapter(dio: dio);
 
-      int postId = 1;
+      String postId = '1';
 
       dioAdapter.onGet(commentsFromPost(postId: postId), (server) {
         server.reply(200, jsonDecode(commentsFromPostResponse));
