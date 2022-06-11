@@ -13,6 +13,7 @@ import 'package:myfeed/app/repositories/posts_repository.dart';
 import 'package:myfeed/app/services/dio_http_service.dart';
 
 import 'responses/all_posts_response.dart';
+import 'responses/comments_from_post_response.dart';
 import 'responses/posts_paginated_response.dart';
 
 void main() {
@@ -76,6 +77,29 @@ void main() {
       List<PostModel> posts = await postsRepository.getAllPosts(page: 1, limit: 10);
 
       expect(posts.length, equals(10));
+    });
+  });
+
+  group('GET COMMENTS FROM POST', () {
+    test('should get comments from post', () async {
+      final Dio dio = Dio();
+
+      final DioAdapter dioAdapter = DioAdapter(dio: dio);
+
+      int postId = 1;
+
+      dioAdapter.onGet(commentsFromPost(postId: postId), (server) {
+        server.reply(200, jsonDecode(commentsFromPostResponse));
+      });
+
+      dio.httpClientAdapter = dioAdapter;
+
+      final IHttpService httpService = DioHttpService(dio: dio);
+      final IPostsRepository postsRepository = PostsRepository(httpService: httpService);
+
+      List<CommentModel> comments = await postsRepository.getCommentsFromPost(postId: postId);
+
+      expect(comments, isNotEmpty);
     });
   });
 
