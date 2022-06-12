@@ -3,8 +3,8 @@ import 'package:myfeed/app/models/comment_model.dart';
 import 'package:myfeed/app/models/post_model.dart';
 import 'package:myfeed/app/repositories/posts_repository.dart';
 import 'package:myfeed/pages/comments/comments_viewmodel.dart';
-import 'package:myfeed/utils/components/comment_component.dart';
 import 'package:myfeed/utils/components/components.dart';
+import 'package:myfeed/utils/show_snack_bar.dart';
 import 'package:provider/provider.dart';
 
 class CommentsPage extends StatelessWidget {
@@ -77,6 +77,8 @@ class CommentsPage extends StatelessWidget {
 
                       if (response == null) {
                         await context.read<CommentsViewmodel>().refreshData();
+                      } else {
+                        showSnackBar(context: context, text: response, color: Colors.red);
                       }
                     },
                   ),
@@ -98,9 +100,9 @@ class CommentsPage extends StatelessWidget {
                       ),
                     );
                   }
-              
+
                   CommentModel commentModel = comments[index];
-              
+
                   return CommentComponent(
                     commentModel: commentModel,
                     onEditComment: (c) {
@@ -112,8 +114,11 @@ class CommentsPage extends StatelessWidget {
                         );
                       });
                     },
-                    onDeleteComment: (BuildContext context) {
-                      context.read<CommentsViewmodel>().deleteComment(commentModel: commentModel);
+                    onDeleteComment: (BuildContext context) async {
+                      String? response = await context.read<CommentsViewmodel>().deleteComment(commentModel: commentModel);
+                      if (response != null) {
+                        showSnackBar(context: context, text: response, color: Colors.red);
+                      }
                     },
                   );
                 },
