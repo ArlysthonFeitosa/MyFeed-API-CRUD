@@ -98,9 +98,9 @@ class CommentsPage extends StatelessWidget {
                       ),
                     );
                   }
-
+              
                   CommentModel commentModel = comments[index];
-
+              
                   return CommentComponent(
                     commentModel: commentModel,
                     onEditComment: (c) {

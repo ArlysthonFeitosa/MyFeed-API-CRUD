@@ -27,23 +27,28 @@ class FeedPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('MyFeed'),
       ),
-      body: ListView.builder(
-        controller: feedViewmodel.scrollController,
-        itemCount: posts.length + 1,
-        itemBuilder: ((context, index) {
-          if (index == posts.length) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: reachedMax ? const Text('No more posts') : const CircularProgressIndicator(),
-              ),
-            );
-          }
-
-          PostModel post = feedViewmodel.posts[index];
-
-          return PostComponent(postModel: post);
-        }),
+      body: RefreshIndicator(
+        onRefresh: (){
+          return feedViewmodel.refreshData();
+        },
+        child: ListView.builder(
+          controller: feedViewmodel.scrollController,
+          itemCount: posts.length + 1,
+          itemBuilder: ((context, index) {
+            if (index == posts.length) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: reachedMax ? const Text('No more posts') : const CircularProgressIndicator(),
+                ),
+              );
+            }
+      
+            PostModel post = feedViewmodel.posts[index];
+      
+            return PostComponent(postModel: post);
+          }),
+        ),
       ),
     );
   }

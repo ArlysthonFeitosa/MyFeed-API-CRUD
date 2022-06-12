@@ -29,6 +29,13 @@ class FeedViewmodel extends ChangeNotifier {
     _page++;
   }
 
+  Future<void> refreshData() async {
+    _page = 1;
+    reachedMax = false;
+    posts.clear();
+    fetchPosts();
+  }
+
   Future<String?> fetchPosts() async {
     if (reachedMax) return null;
     try {

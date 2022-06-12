@@ -68,7 +68,7 @@ class CommentsViewmodel extends ChangeNotifier {
         commentId: UniqueKey().toString(),
         postId: postModel.postId,
         ownerAvatarURL: 'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1195.jpg',
-        ownerUsername: 'MyUseranme',
+        ownerUsername: 'MyUsername',
         content: content,
       );
 
