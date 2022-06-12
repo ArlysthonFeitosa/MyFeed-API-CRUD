@@ -6,6 +6,7 @@ class CommentModel {
   final String ownerAvatarURL;
   final String ownerUsername;
   final String content;
+  final DateTime createdAt;
 
   CommentModel({
     required this.commentId,
@@ -13,6 +14,7 @@ class CommentModel {
     required this.ownerAvatarURL,
     required this.ownerUsername,
     required this.content,
+    required this.createdAt,
   });
 
   CommentModel copyWith({
@@ -21,6 +23,7 @@ class CommentModel {
     String? ownerAvatarURL,
     String? ownerUsername,
     String? content,
+    DateTime? createdAt,
   }) {
     return CommentModel(
       commentId: commentId ?? this.commentId,
@@ -28,12 +31,13 @@ class CommentModel {
       ownerAvatarURL: ownerAvatarURL ?? this.ownerAvatarURL,
       ownerUsername: ownerUsername ?? this.ownerUsername,
       content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
   @override
   String toString() =>
-      'CommentModel(commentId: $commentId, ownerAvatarURL: $ownerAvatarURL, ownerUsername: $ownerUsername, content: $content, postId: $postId)';
+      'CommentModel(createdAt: $createdAt, commentId: $commentId, ownerAvatarURL: $ownerAvatarURL, ownerUsername: $ownerUsername, content: $content, postId: $postId)';
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -42,6 +46,7 @@ class CommentModel {
       'avatar': ownerAvatarURL,
       'username': ownerUsername,
       'content': content,
+      'createdAt': createdAt.millisecondsSinceEpoch,
     };
   }
 
@@ -52,6 +57,7 @@ class CommentModel {
       ownerAvatarURL: map['avatar'] as String,
       ownerUsername: map['username'] as String,
       content: map['content'] as String,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
     );
   }
 

@@ -50,6 +50,7 @@ class CommentsViewmodel extends ChangeNotifier {
       String content = newCommentFieldController.text;
 
       CommentModel commentModel = CommentModel(
+        createdAt: DateTime.now(),
         commentId: UniqueKey().toString(),
         postId: postModel.postId,
         ownerAvatarURL: 'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1195.jpg',
@@ -94,6 +95,7 @@ class CommentsViewmodel extends ChangeNotifier {
       }
 
       comments.addAll(commentsResponse);
+
       notifyListeners();
       return null;
     } on HandledException catch (e) {

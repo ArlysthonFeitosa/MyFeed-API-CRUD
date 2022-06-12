@@ -30,14 +30,13 @@ class PostsRepository extends ChangeNotifier implements IPostsRepository {
   @override
   Future<List<CommentModel>> getCommentsFromPost({required String postId, int? page, int? limit}) async {
     List<dynamic> response = await httpService.get(
-      url: commentsFromPost(postId: postId, page: page, limit: limit),
+      url: commentsFromPostEndpoint(postId: postId, page: page, limit: limit),
     );
 
     List<CommentModel> comments = [];
     for (Map<String, dynamic> map in response) {
       comments.add(CommentModel.fromMap(map));
     }
-
     return comments;
   }
 

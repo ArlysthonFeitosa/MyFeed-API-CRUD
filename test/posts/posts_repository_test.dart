@@ -88,7 +88,7 @@ void main() {
 
       String postId = '1';
 
-      dioAdapter.onGet(commentsFromPost(postId: postId), (server) {
+      dioAdapter.onGet(commentsFromPostEndpoint(postId: postId), (server) {
         server.reply(200, jsonDecode(commentsFromPostResponse));
       });
 
@@ -107,6 +107,7 @@ void main() {
     //DISABLE UNCAUGHT EXCEPTIONS FOR THIS TEST
     test('should not create comment', () async {
       CommentModel commentModel = CommentModel(
+        createdAt: DateTime.now(),
         commentId: 'commentId',
         postId: 'postId',
         ownerAvatarURL: 'ownerAvatarURL',
@@ -145,6 +146,7 @@ void main() {
     //DISABLE UNCAUGHT EXCEPTIONS FOR THIS TEST
     test('should not update comment', () async {
       CommentModel commentModel = CommentModel(
+        createdAt: DateTime.now(),
         commentId: 'commentId',
         postId: 'postId',
         ownerAvatarURL: 'ownerAvatarURL',
@@ -183,6 +185,7 @@ void main() {
   group('DELETE COMMENT METHOD |', () {
     test('should not delete comment', () async {
       CommentModel commentModel = CommentModel(
+        createdAt: DateTime.now(),
         commentId: 'commentId',
         postId: 'postId',
         ownerAvatarURL: 'ownerAvatarURL',
