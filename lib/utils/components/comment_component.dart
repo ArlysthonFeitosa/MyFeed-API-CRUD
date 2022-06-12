@@ -5,10 +5,14 @@ import 'package:myfeed/utils/components/components.dart';
 class CommentComponent extends StatelessWidget {
   const CommentComponent({
     required this.commentModel,
+    required this.onDeleteComment,
+    required this.onEditComment,
     Key? key,
   }) : super(key: key);
 
   final CommentModel commentModel;
+  final Function(BuildContext context) onDeleteComment;
+  final Function(BuildContext context) onEditComment;
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +26,23 @@ class CommentComponent extends StatelessWidget {
             ),
             const Expanded(child: SizedBox()),
             PopupMenuButton(
-              itemBuilder: ((context) {
+              itemBuilder: (context) {
                 return <PopupMenuEntry>[
                   PopupMenuItem(
-                    onTap: () {},
+                    onTap: () {
+                      onEditComment(context);
+                    },
                     child: const Text('Edit'),
                   ),
                   PopupMenuItem(
-                    onTap: () {},
+                    onTap: () {
+                      onDeleteComment(context);
+                    },
                     child: const Text('Delete'),
                   ),
                 ];
-              }),
-            )
+              },
+            ),
           ],
         ),
         const SizedBox(height: 8),

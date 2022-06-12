@@ -80,7 +80,7 @@ void main() {
     });
   });
 
-  group('GET COMMENTS FROM POST', () {
+  group('GET COMMENTS FROM POST |', () {
     test('should get comments from post', () async {
       final Dio dio = Dio();
 

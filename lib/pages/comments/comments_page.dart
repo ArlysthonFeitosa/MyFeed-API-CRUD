@@ -56,12 +56,15 @@ class CommentsPage extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Form(
-                      key: context.read<CommentsViewmodel>().formkey,
+                      key: context.read<CommentsViewmodel>().newCommentFormkey,
                       child: Column(
                         children: [
                           TextFieldComponent(
                             hint: 'Write a comment...',
                             controller: context.read<CommentsViewmodel>().newCommentFieldController,
+                            validation: (text) {
+                              return context.read<CommentsViewmodel>().newCommentFieldValidation(text: text);
+                            },
                           ),
                         ],
                       ),
@@ -70,7 +73,7 @@ class CommentsPage extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.send),
                     onPressed: () async {
-                      String? response = await context.read<CommentsViewmodel>().sendComment();
+                      String? response = await context.read<CommentsViewmodel>().sendComment(); //
 
                       if (response == null) {
                         await context.read<CommentsViewmodel>().refreshData();
@@ -98,13 +101,93 @@ class CommentsPage extends StatelessWidget {
 
                   CommentModel commentModel = comments[index];
 
-                  return CommentComponent(commentModel: commentModel);
+                  return CommentComponent(
+                    commentModel: commentModel,
+                    onEditComment: (c) {
+                      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                        showEditCommentDialog(
+                          context: context,
+                          commentModel: commentModel,
+                          viewmodel: c.read<CommentsViewmodel>(),
+                        );
+                      });
+                    },
+                    onDeleteComment: (BuildContext context) {
+                      context.read<CommentsViewmodel>().deleteComment(commentModel: commentModel);
+                    },
+                  );
                 },
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void showEditCommentDialog({
+    required BuildContext context,
+    required CommentModel commentModel,
+    required CommentsViewmodel viewmodel,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final controller = viewmodel.editCommentFieldController;
+        controller.text = commentModel.content;
+
+        return AlertDialog(
+          title: Text(commentModel.ownerUsername),
+          actions: [
+            TextButton(
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () async {
+                if (viewmodel.validateEditCommentField()) {
+                  viewmodel.editComment(
+                    commentModel: commentModel.copyWith(
+                      content: controller.text,
+                    ),
+                  );
+                  Navigator.of(context).pop();
+                }
+              },
+            )
+          ],
+          content: Row(
+            children: [
+              Flexible(
+                child: Form(
+                  key: viewmodel.editCommentFormkey,
+                  child: TextFieldComponent(
+                    hint: 'Edit comment',
+                    controller: viewmodel.editCommentFieldController,
+                    validation: (text) {
+                      return viewmodel.editCommentFieldValidation(
+                        text: text,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  controller.text = '';
+                },
+                icon: const Icon(Icons.clear),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -13,10 +13,12 @@ class CommentsViewmodel extends ChangeNotifier {
 
   final IPostsRepository postsRepository;
   final PostModel postModel;
-  final formkey = GlobalKey<FormState>();
+  final newCommentFormkey = GlobalKey<FormState>();
+  final editCommentFormkey = GlobalKey<FormState>();
 
   ScrollController scrollController = ScrollController();
   TextEditingController newCommentFieldController = TextEditingController();
+  TextEditingController editCommentFieldController = TextEditingController();
 
   int _page = 1;
   final int _limit = 5;
@@ -31,21 +33,33 @@ class CommentsViewmodel extends ChangeNotifier {
     });
   }
 
-  String? newCommentFieldValidation() {
-    if (newCommentFieldController.text.isEmpty) {
+  String? newCommentFieldValidation({required String? text}) {
+    if (text == null || text.isEmpty) {
       return 'Fill in this field.';
     }
     return null;
   }
 
-  bool validateFields() {
-    if (formkey.currentState == null) return false;
-    return formkey.currentState!.validate();
+  String? editCommentFieldValidation({required String? text}) {
+    if (text == null || text.isEmpty) {
+      return 'Fill in this field.';
+    }
+    return null;
+  }
+
+  bool validateNewCommentField() {
+    if (newCommentFormkey.currentState == null) return false;
+    return newCommentFormkey.currentState!.validate();
+  }
+
+  bool validateEditCommentField() {
+    if (editCommentFormkey.currentState == null) return false;
+    return editCommentFormkey.currentState!.validate();
   }
 
   Future<String?> sendComment() async {
     try {
-      if (!validateFields()) throw TryAgainLaterException();
+      if (!validateNewCommentField()) throw TryAgainLaterException();
 
       String content = newCommentFieldController.text;
 
@@ -96,6 +110,28 @@ class CommentsViewmodel extends ChangeNotifier {
 
       comments.addAll(commentsResponse);
 
+      notifyListeners();
+      return null;
+    } on HandledException catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String?> deleteComment({required CommentModel commentModel}) async {
+    try {
+      await postsRepository.deleteComment(commentModel: commentModel);
+      refreshData();
+      notifyListeners();
+      return null;
+    } on HandledException catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String?> editComment({required CommentModel commentModel}) async {
+    try {
+      await postsRepository.updateComment(commentModel: commentModel);
+      refreshData();
       notifyListeners();
       return null;
     } on HandledException catch (e) {
