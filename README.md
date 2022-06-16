@@ -1,6 +1,6 @@
 # MyFeed
 
-Este aplicativo foi criado para treinar CRUD com API REST (Get, Post, Put, Delete) 
+Este aplicativo foi criado para treinar CRUD com API REST (Get, Post, Put, Delete).
 
 ## MockAPI
 
@@ -25,6 +25,10 @@ Também oferece paginação, ordenação, filtro, pesquisa...<br/>
 ## Gerência de estado
 
 - Change Notifier
+
+## Navegação
+
+- Rotas nomeadas
 
 ## Testes
 
