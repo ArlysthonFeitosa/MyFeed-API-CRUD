@@ -48,3 +48,4 @@ Também oferece paginação, ordenação, filtro, pesquisa...<br/>
   
   #### Deletar Comentário
   ![Deletar Comentário](https://github.com/ArlysthonFeitosa/MyFeed-API-CRUD/blob/master/project_gifs/delete.gif)<br/>
+  
